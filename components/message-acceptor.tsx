@@ -1,6 +1,6 @@
 'use client';
 import {useEffect} from "react";
-import {useSearchParams, useRouter} from "next/navigation";
+import {useSearchParams, useRouter, usePathname} from "next/navigation";
 
 import {useToast} from "@/components/ui/use-toast"
 
@@ -8,6 +8,7 @@ export default function MessageAcceptor() {
 
     const {toast} = useToast();
     const searchParams = useSearchParams();
+    const pathname = usePathname();
     const router = useRouter();
 
     useEffect(() => {
@@ -22,7 +23,7 @@ export default function MessageAcceptor() {
             variant: 'destructive'
         });
 
-        router.replace('/login')
+        router.replace(pathname)
 
     }, [searchParams]);
 

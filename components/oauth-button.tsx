@@ -17,7 +17,7 @@ export default function OAuthButton({provider, className}: { provider: 'google' 
             }
         })
         if (error) {
-            return redirect(`/login?error=${error.message}`)
+            return redirect(`/?error=${error.message}`)
         }
     }
 
