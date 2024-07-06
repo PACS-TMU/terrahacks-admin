@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import applicationsRender from '@/server/applications';
 
 export default function Applications() {
-    const [applications, setApplications] = useState(null);
-    const [error, setError] = useState(null);
+    const [applications, setApplications] = useState<any>(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         async function fetchApplications() {
@@ -13,7 +13,13 @@ export default function Applications() {
                 const data = await applicationsRender();
                 setApplications(data);
             } catch (err) {
-                setError(err.message);
+                // Since err is of type unknown, we need to narrow down its type
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    // Handle cases where the error is not an Error object
+                    setError("An unknown error occurred");
+                }
             }
         }
 

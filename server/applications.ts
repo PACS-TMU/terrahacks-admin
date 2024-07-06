@@ -6,9 +6,8 @@ export default async function applicationsRender() {
     const supabase = createAdminClient();
 
     // List all users with the auth admin api
-    const { data, error } = await supabase.auth.admin.listUsers();
+    const { data, error } = await supabase.from('applications').select('*');
     console.log(data);
     
     return data;
-
 }
