@@ -5,6 +5,7 @@ import applicationsRender from '@/server/applications';
 import { columns } from './columns';
 import { DataTable } from './data-table';
 import Intro from '@/components/intro';
+import Loading from '@/components/loading';
 
 export default function Applications() {
     const [applications, setApplications] = useState<any>(null);
@@ -35,11 +36,15 @@ export default function Applications() {
 
     return (
         <>
-            <Intro />
-            <div className="container mx-auto py-10">
-                <DataTable columns={columns} data={applications} />
-            </div>
+            {/* If there are no applications, show Loading */}
+            {!applications ? (<Loading />) : (
+                <>
+                    <Intro />
+                    <div className="container mx-auto py-10">
+                        <DataTable columns={columns} data={applications} />
+                    </div>
+                </>
+            )}
         </>
-
     );
 }
