@@ -17,5 +17,9 @@ export const columns: ColumnDef<any>[] = [
     {
         accessorKey: "status",
         header: "Status",
+    },
+    {
+        accessorKey: "review_application",
+        header: "Review Application",
     }
 ]

@@ -1,5 +1,7 @@
 "use client"
 
+import Link from "next/link" 
+
 import {
   ColumnDef,
   flexRender,
@@ -69,7 +71,16 @@ export function DataTable<TData, TValue>({
                     </TableCell>
                     <TableCell>{application.applicant_details?.email}</TableCell>
                     <TableCell>{application.applied_date}</TableCell>
-                        <TableCell className="text-right">{application.status}</TableCell>
+                    <TableCell>{application.status}</TableCell>
+                    <TableCell>
+                        <Link 
+                            href={`/dashboard/applications/${application.account_id}`} 
+                            target="_blank" 
+                            className="text-sky-600 underline hover:text-fuchsia-600 ease-in-out duration-300"
+                        >
+                            Review Here
+                        </Link>
+                    </TableCell>
                 </TableRow>
             ))}
             </TableBody>
