@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import applicationsRender from '@/server/applications';
 import { columns } from './columns';
 import { DataTable } from './data-table';
+import Intro from '@/components/intro';
 
 export default function Applications() {
     const [applications, setApplications] = useState<any>(null);
@@ -33,8 +34,12 @@ export default function Applications() {
     }
 
     return (
-        <div className="container mx-auto py-10">
-            <DataTable columns={columns} data={applications} />
-        </div>
+        <>
+            <Intro />
+            <div className="container mx-auto py-10">
+                <DataTable columns={columns} data={applications} />
+            </div>
+        </>
+
     );
 }
