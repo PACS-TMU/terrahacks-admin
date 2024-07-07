@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import applicationsRender from '@/server/applications';
+import { columns } from './columns';
+import { DataTable } from './data-table';
 
 export default function Applications() {
     const [applications, setApplications] = useState<any>(null);
@@ -31,16 +33,8 @@ export default function Applications() {
     }
 
     return (
-        <div>
-            <h1>This is the Applications page</h1>
-            {applications ? (
-                <div>
-                    <h2>Applications:</h2>
-                    <pre>{JSON.stringify(applications, null, 2)}</pre>
-                </div>
-            ) : (
-                <p>Loading...</p>
-            )}
+        <div className="container mx-auto py-10">
+            <DataTable columns={columns} data={applications} />
         </div>
     );
 }
