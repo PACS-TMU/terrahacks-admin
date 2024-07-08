@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { PiSignOut } from "react-icons/pi";
 import { useState } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 export default function NavSignoutButton() {
   const [signingOut, setSigningOut] = useState(false);
@@ -9,24 +10,16 @@ export default function NavSignoutButton() {
 
   const handleSignOut = async () => {
     setSigningOut(true);
-    try {
-      const response = await fetch('/api/signout', {
-        method: 'POST',
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          router.push('/login');
-        } else {
-          console.error('Failed to sign out');
-        }
-      } else {
-        console.error('Failed to sign out');
-      }
-    } catch (error) {
-      console.error('Error signing out:', error);
+    const origin = window.location.origin;
+    
+    const supabase = createClient();
+    const { error } = await supabase.auth.signOut();
+    
+    if (error) {
+        router.replace(`${origin}?error=Failed to sign out. ${error.message}`);
     }
+
+    router.replace("/?message=Signed out successfully.")
   }
 
   return (
