@@ -39,7 +39,10 @@ export default function Applications() {
             {/* If there are no applications, show Loading */}
             {!applications ? (<Loading />) : (
                 <>
-                    <Intro />
+                    <Intro
+                        header="Applications"
+                        description="View all applications submitted by participants. You can view the status of each application and the applicant's details."
+                    />
                     <div className="container mx-auto py-10">
                         <DataTable columns={columns} data={applications} />
                     </div>
