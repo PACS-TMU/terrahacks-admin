@@ -47,7 +47,7 @@ export function DataTable<TData extends Application, TValue>({
 }: DataTableProps<TData, TValue>) {
     const dataTable = useMemo(() => data, [data]);
 
-    const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+    const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 15 });
 
     const table = useReactTable({
         data: dataTable,
@@ -61,10 +61,20 @@ export function DataTable<TData extends Application, TValue>({
         getPaginationRowModel: getPaginationRowModel(),
     });
 
+    const [pageInput, setPageInput] = useState(table.getState().pagination.pageIndex + 1);
+
+    const handlePageChange = () => {
+        const pageIndex = pageInput - 1;
+        if (pageIndex >= 0 && pageIndex < table.getPageCount()) {
+            table.setPageIndex(pageIndex);
+        } else {
+            setPageInput(table.getState().pagination.pageIndex + 1);
+        }
+    };
+
     return (
         <div className="rounded-md border">
             <Table>
-                {/* <TableCaption>A list of all applicants</TableCaption> */}
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
@@ -108,26 +118,55 @@ export function DataTable<TData extends Application, TValue>({
                     ))}
                 </TableBody>
             </Table>
-            <div className="flex items-center justify-end space-x-2 py-4 px-4 mx-4">
-                <span>
-                    Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                </span>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Previous
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Next
-                </Button>
+            <div className="flex items-center justify-between space-x-4 py-4">
+                <div className="flex items-center space-x-1 px-4">
+                    <span>
+                        Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                    </span>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        Previous
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Next
+                    </Button>
+                </div>
+
+                <div className="px-4 flex flex-col">
+                    <div className="space-x-1">
+                        <span>
+                            Enter Page Number:
+                        </span>
+                        <input
+                            type="number"
+                            value={pageInput}
+                            name="pageInput"
+                            onChange={(e) => setPageInput(Number(e.target.value))}
+                            className="w-16 p-1 text-center border rounded"
+                            min={1}
+                            max={table.getPageCount()}
+                        />
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handlePageChange}
+                        >
+                            Go
+                        </Button>
+                    </div>
+                    <div className="py-1 lg:text-xs xl:text-sm text-gray-400">
+                        Showing 15 entries of {dataTable.length} per page
+                    </div>
+                </div>
             </div>
         </div>
     )

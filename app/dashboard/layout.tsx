@@ -23,7 +23,7 @@ export default function DashboardLayout({children}: { children: React.ReactNode 
         //         {children}
         //     </ResizablePanel>
         // </ResizablePanelGroup>
-        <section className={`${raleway.className} w-full`}>
+        <section className={`${raleway.className} w-full lg:text-sm xl:text-base`}>
             <SideNav />
             <div className="md:pl-72 2xl:pl-80">
                 {children}
