@@ -1,6 +1,7 @@
 "use client"
 
-import Link from "next/link"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 import {
     ColumnDef,
@@ -8,7 +9,7 @@ import {
     getCoreRowModel,
     getPaginationRowModel,
     useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
 import {
     Table,
@@ -17,26 +18,48 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
-import { useMemo } from "react"
+} from "@/components/ui/table";
+
+import { useMemo, useState } from "react";
+
+interface ApplicantDetails {
+    first_name: string;
+    last_name: string;
+    email: string;
+}
+
+interface Application {
+    application_id: string;
+    applicant_details: ApplicantDetails;
+    applied_date: string;
+    status: string;
+    account_id: string;
+}
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends Application, TValue>({
     columns,
     data
 }: DataTableProps<TData, TValue>) {
+    const dataTable = useMemo(() => data, [data]);
 
-    const dataTable = useMemo(() => data, []);
+    const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+
     const table = useReactTable({
         data: dataTable,
         columns,
+        pageCount: Math.ceil(dataTable.length / pagination.pageSize),
+        state: {
+            pagination,
+        },
+        onPaginationChange: setPagination,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-    })
+    });
 
     return (
         <div className="rounded-md border">
@@ -62,19 +85,19 @@ export function DataTable<TData, TValue>({
                 </TableHeader>
 
                 <TableBody>
-                    {data?.map((application: any) => (
-                        <TableRow key={application.application_id}>
+                    {table.getRowModel().rows.map((row) => (
+                        <TableRow key={row.id}>
                             <TableCell>
                                 {
-                                    application.applicant_details?.first_name + " " + application.applicant_details?.last_name || "N/A"
+                                    row.original.applicant_details?.first_name + " " + row.original.applicant_details?.last_name || "N/A"
                                 }
                             </TableCell>
-                            <TableCell>{application.applicant_details?.email}</TableCell>
-                            <TableCell>{application.applied_date}</TableCell>
-                            <TableCell>{application.status}</TableCell>
+                            <TableCell>{row.original.applicant_details?.email}</TableCell>
+                            <TableCell>{row.original.applied_date}</TableCell>
+                            <TableCell>{row.original.status}</TableCell>
                             <TableCell>
                                 <Link
-                                    href={`/dashboard/applications/${application.account_id}`}
+                                    href={`/dashboard/applications/${row.original.account_id}`}
                                     target="_blank"
                                     className="text-sky-600 underline hover:text-fuchsia-600 ease-in-out duration-300"
                                 >
@@ -84,29 +107,28 @@ export function DataTable<TData, TValue>({
                         </TableRow>
                     ))}
                 </TableBody>
-                <TableBody>
-                    {/* {table.getRowModel()?.rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                <TableRow
-                    key={row.id}
-                    // data-state={row.getIsSelected() && "selected"}
-                >
-                    {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                    ))}
-                </TableRow>
-                ))
-            ) : (
-                <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                    No results.
-                </TableCell>
-                </TableRow>
-            )} */}
-                </TableBody>
             </Table>
+            <div className="flex items-center justify-end space-x-2 py-4 px-4 mx-4">
+                <span>
+                    Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                </span>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.previousPage()}
+                    disabled={!table.getCanPreviousPage()}
+                >
+                    Previous
+                </Button>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.nextPage()}
+                    disabled={!table.getCanNextPage()}
+                >
+                    Next
+                </Button>
+            </div>
         </div>
     )
 }
