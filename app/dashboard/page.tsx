@@ -19,7 +19,6 @@ export default async function Dashboard() {
                 description="Welcome to the admin dashboard. Below are some statistics and actions you can take."
             />
             <section className={'min-h-screen flex flex-col items-center'}>
-                <MessageAcceptor />
             </section>
         </>
 
