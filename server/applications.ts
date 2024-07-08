@@ -1,6 +1,5 @@
 'use server';
 import {createClient} from "@/utils/supabase/server";
-import {redirect} from "next/navigation";
 
 export default async function applicationsRender() {
     const supabase = createClient();
@@ -15,7 +14,9 @@ export default async function applicationsRender() {
             first_name,
             last_name
         )
-        `).order('applied_date', { ascending: true });
+        `)
+        .order('status', { ascending: true})
+        .order('applied_date', { ascending: true });
 
     
     if (dataError) {

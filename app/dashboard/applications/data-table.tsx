@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/table";
 
 import { useMemo, useState } from "react";
+import { format } from 'date-fns';
 
 interface ApplicantDetails {
     first_name: string;
@@ -103,7 +104,7 @@ export function DataTable<TData extends Application, TValue>({
                                 }
                             </TableCell>
                             <TableCell>{row.original.applicant_details?.email}</TableCell>
-                            <TableCell>{row.original.applied_date}</TableCell>
+                            <TableCell>{format((row.original.applied_date), 'PPpp')}</TableCell>
                             <TableCell>{row.original.status}</TableCell>
                             <TableCell>
                                 <Link
@@ -151,6 +152,11 @@ export function DataTable<TData extends Application, TValue>({
                             value={pageInput}
                             name="pageInput"
                             onChange={(e) => setPageInput(Number(e.target.value))}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    handlePageChange();
+                                }
+                            }}
                             className="w-16 p-1 text-center border rounded"
                             min={1}
                             max={table.getPageCount()}
@@ -164,7 +170,7 @@ export function DataTable<TData extends Application, TValue>({
                         </Button>
                     </div>
                     <div className="py-1 lg:text-xs xl:text-sm text-gray-400">
-                        Showing 15 entries of {dataTable.length} per page
+                        Showing entries {pagination.pageIndex * pagination.pageSize + 1} - {Math.min((pagination.pageIndex + 1) * pagination.pageSize, dataTable.length)} of {dataTable.length} entries
                     </div>
                 </div>
             </div>
