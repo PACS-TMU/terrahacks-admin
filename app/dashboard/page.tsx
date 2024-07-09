@@ -1,3 +1,4 @@
+'use server';
 import {createClient} from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
 import Intro from "@/components/intro";
@@ -5,8 +6,6 @@ import Link from "next/link";
 import {
     Card,
     CardContent,
-    CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
