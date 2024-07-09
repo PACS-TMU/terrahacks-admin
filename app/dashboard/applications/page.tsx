@@ -1,53 +1,44 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import applicationsRender from '@/server/applications';
-import { columns } from './columns';
-import { DataTable } from './data-table';
+'use server';
+import {columns} from './columns';
+import {DataTable} from './data-table';
 import Intro from '@/components/intro';
-import Loading from '@/components/loading';
+import {redirect} from "next/navigation";
+import {createClient} from "@/utils/supabase/server";
 
-export default function Applications() {
-    const [applications, setApplications] = useState<any>(null);
-    const [error, setError] = useState<string | null>(null);
+export default async function Applications() {
+    const supabase = createClient();
+    const {data: {user}} = await supabase.auth.getUser();
 
-    useEffect(() => {
-        async function fetchApplications() {
-            try {
-                const data = await applicationsRender();
-                setApplications(data);
-            } catch (err) {
-                // Since err is of type unknown, we need to narrow down its type
-                if (err instanceof Error) {
-                    setError(err.message);
-                } else {
-                    // Handle cases where the error is not an Error object
-                    setError("An unknown error occurred");
-                }
-            }
-        }
+    if (!user) {
+        return redirect("/?error=Unauthorized. Log in with Admin credentials.")
+    }
 
-        fetchApplications();
-    }, []);
+    const {data: applications, error: dataError} = await supabase.from('applications').select(`
+        account_id,
+        applied_date,
+        status,
+        applicant_details (
+            email,
+            first_name,
+            last_name
+        )
+        `)
+        .order('status', {ascending: true})
+        .order('applied_date', {ascending: true});
 
-    if (error) {
-        return <div>Error: {error}</div>;
+    if (dataError) {
+        return redirect(`/dashboard/applications?error=${dataError.message}`);
     }
 
     return (
         <>
-            {/* If there are no applications, show Loading */}
-            {!applications ? (<Loading />) : (
-                <>
-                    <Intro
-                        header="Applications"
-                        description="View all applications submitted by participants. You can view the status of each application and the applicant's details."
-                    />
-                    <div className="container mx-auto py-10">
-                        <DataTable columns={columns} data={applications} />
-                    </div>
-                </>
-            )}
+            <Intro
+                header="Applications"
+                description="View all applications submitted by participants. You can view the status of each application and the applicant's details."
+            />
+            <div className="container mx-auto py-10">
+                <DataTable columns={columns} data={applications}/>
+            </div>
         </>
     );
 }
