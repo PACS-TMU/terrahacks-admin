@@ -6,6 +6,7 @@
 import SideNav from "@/components/sidenav/sidenav";
 import { Raleway } from 'next/font/google';
 import Footer from "@/components/footer";
+import MessageAcceptor from "@/components/message-acceptor";
 
 const raleway = Raleway({
     subsets: ['latin'],
@@ -29,6 +30,7 @@ export default function DashboardLayout({children}: { children: React.ReactNode 
                 {children}
                 <Footer />
             </div>
+            <MessageAcceptor />
         </section>
     )
 }
