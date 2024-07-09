@@ -1,4 +1,4 @@
-export default function UserDetails({ user_id, appQuestions }: { user_id: string, appQuestions: any }) {
+export default function UserDetails({ user_id, userData, appQuestions }: { user_id: string, userData: any, appQuestions: any }) {
     return (
         <>
             <div className="container mx-auto py-10">
