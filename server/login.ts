@@ -14,7 +14,7 @@ export default async function login(formData: FormData) {
     if (error) {
         return redirect(`/?error=${error.message}`)
     } else {
-        const {data: adminUser, error: dbError} = await supabase.from('admin').select().eq('account_id', user?.id).single();
+        const {data: adminUser, error: dbError} = await supabase.from('admins').select().eq('account_id', user?.id).single();
         if (dbError && dbError.code === "PGRST116") { // User is not in Admin table
             await supabase.auth.signOut();
             return redirect(`/?error=Unauthorized. Log in with Admin credentials.`)

@@ -5,29 +5,6 @@ import Intro from "@/components/intro";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
-type UserDetails = {
-    first_name: string,
-    last_name: string,
-    email: string,
-    application_id: string,
-    status: string,
-    major: string,
-    school: string,
-    year: string,
-    grad_year: string,
-    city: string,
-    province: string,
-    country: string,
-    tmuStudent: boolean,
-    accomodation: boolean,
-    accomodationDetails: string,
-    github: string,
-    linkedin: string,
-    dietaryRestrictions: string,
-    response1: string,
-    response2: string,
-}
-
 export const metadata: Metadata = {
     title: 'TerraHacks Admin - Review',
 };
@@ -41,23 +18,93 @@ export default async function Page({ params }: { params: { user_id: string } }) 
         return redirect("/?error=Unauthorized. Log in with Admin credentials.")
     }
 
+    // Fetch user details
+    const { data: fetchedData, error: detailsError } = await supabase.from('applicant_details')
+        .select(`
+            account_id, 
+            first_name, 
+            last_name, 
+            email, 
+            application_id, 
+            tmu_student, 
+            accommodation, 
+            github, 
+            linkedin, 
+            dietary_restrictions, 
+            grad_year, 
+            city, 
+            province_state, 
+            country, 
+            school, 
+            field_of_study, 
+            level_of_study,
+            applications!inner(applied_date, status)
+        `)
+        .eq('account_id', params.user_id)
+        .single();
+    
+    // Redirect if there is an error
+    if (detailsError) {
+        return redirect(`/dashboard/applications/${params.user_id}?error=details-fetch-error: ${detailsError.message}`);
+    }
+
+    // Redirect if user details are not found
+    if (!fetchedData) {
+        return redirect(`/dashboard/applications/${params.user_id}?error=user-details-not-found`);
+    }
+
+    // Check tmu_student
+    let tmuStudentNum = null;
+    if (fetchedData.tmu_student) {
+        const { data: tmuStudentData, error: tmuStudentError } = await supabase.from('tmu_students').select('student_num').eq('account_id', params.user_id).single();
+        if (tmuStudentError) {
+            return redirect(`/dashboard/applications/${params.user_id}?error=tmu-student-fetch-error: ${tmuStudentError.message}`);
+        }
+        tmuStudentNum = tmuStudentData.student_num;
+    }
+
+    // Check accommodation
+    let accommodationData = null;
+    if (fetchedData.accommodation) {
+        const { data: accommodation, error: accommodationError } = await supabase.from('accommodations').select().eq('account_id', params.user_id).single();
+        if (accommodationError) {
+            return redirect(`/dashboard/applications/${params.user_id}?error=accommodation-fetch-error: ${accommodationError.message}`);
+        }
+        accommodationData = accommodation;
+    }
+
     // Fetch questions
     const { data: questions, error: questionsError } = await supabase.from('questions').select();
 
-    // Fetch user details
-    // Update this to actual get all the user details
-    const { data: fetchedData, error: detailsError } = await supabase.from('applications').select().eq('user_id', params.user_id).single();
-
-
     // Redirect if there is an error
-    if (detailsError) {
-        if (questionsError) {
-            return redirect(`/dashboard/applications/${params.user_id}?error=details-fetch-error: ${detailsError.message}`);
-        }
-    }
-
     if (questionsError) {
         return redirect(`/dashboard/applications/${params.user_id}?error=questions-fetch-error: ${questionsError.message}`);
+    }
+
+    // Fetch user responses
+    const { data: responses, error: responsesError } = await supabase.from('responses')
+        .select('question_id, response')
+        .eq('account_id', params.user_id);
+
+    // Redirect if there is an error
+    if (responsesError) {
+        return redirect(`/dashboard/applications/${params.user_id}?error=responses-fetch-error: ${responsesError.message}`);
+    }
+
+    // Fetch admin logs of this application
+    let adminLogs: any[] = [];
+    const { data: fetchedAdminLogs, error: adminLogsError } = await supabase.from('admin_logs')
+        .select('timestamp, previous_status, new_status, admin_id, admins!inner(first_name, last_name)')
+        .eq('application_id', fetchedData.application_id)
+        .order('timestamp', { ascending: false });
+    
+    // Redirect if there is an error
+    if (adminLogsError) {
+        return redirect(`/dashboard/applications/${params.user_id}?error=admin-logs-fetch-error: ${adminLogsError.message}`);
+    }
+
+    if (fetchedAdminLogs) {
+        adminLogs = fetchedAdminLogs;
     }
 
     return (
@@ -66,7 +113,15 @@ export default async function Page({ params }: { params: { user_id: string } }) 
                 header="Review User Applications"
                 description="View the application details that a user submitted. Update the status after reviewing. Please note that the user's details are confidential and should not be shared with anyone."
             />
-            <UserDetails user_id={params.user_id} userData={fetchedData} appQuestions={questions} />
+            <UserDetails 
+                user_id={params.user_id} 
+                userData={fetchedData} 
+                appQuestions={questions} 
+                appResponses={responses} 
+                tmuStudentNum={tmuStudentNum} 
+                accommodation={accommodationData} 
+                adminLogs={adminLogs}
+            />
         </>
     )
 }
