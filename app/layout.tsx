@@ -9,8 +9,8 @@ const defaultUrl = process.env.NEXT_PUBLIC_BASE_URL
 
 export const metadata = {
   metadataBase: new URL('https://admin.terrahacks.ca'),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: "TerraHacks Admin - Dashboard",
+  description: "Manage all TerraHacks admin things in one place easily! From applications to judging, handle it all from the admin dashboard.",
 };
 
 export default function RootLayout({
