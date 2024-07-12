@@ -14,15 +14,17 @@ export default async function Applications() {
     }
 
     const {data: applications, error: dataError} = await supabase.from('applications').select(`
-        account_id,
-        applied_date,
-        status,
-        applicant_details (
-            email,
-            first_name,
-            last_name
-        )
+            account_id,
+            applied_date,
+            status,
+            applicant_details (
+                email,
+                first_name,
+                last_name
+            ),
+            users!inner(applied)
         `)
+        .eq('users.applied', 'Applied')
         .order('status', {ascending: true})
         .order('applied_date', {ascending: true});
 

@@ -13,7 +13,6 @@ import {buttonVariants} from "@/components/ui/button"
 
 
 export default async function Dashboard() {
-
     const supabase = createClient();
     const {data: {user}} = await supabase.auth.getUser();
 

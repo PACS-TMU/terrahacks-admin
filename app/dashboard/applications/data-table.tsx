@@ -108,8 +108,9 @@ export function DataTable<TData extends Application, TValue>({
                             <TableCell>{row.original.status}</TableCell>
                             <TableCell>
                                 <Link
+                                    aria-label="Review Application"
                                     href={`/dashboard/applications/${row.original.account_id}`}
-                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="text-sky-600 underline hover:text-fuchsia-600 ease-in-out duration-300"
                                 >
                                     Review Here
