@@ -4,6 +4,7 @@ import {DataTable} from './data-table';
 import Intro from '@/components/intro';
 import {redirect} from "next/navigation";
 import {createClient} from "@/utils/supabase/server";
+import Search from '@/components/search';
 
 export default async function Applications() {
     const supabase = createClient();
@@ -38,7 +39,8 @@ export default async function Applications() {
                 header="Applications"
                 description="View all applications submitted by participants. You can view the status of each application and the applicant's details."
             />
-            <div className="container mx-auto py-10">
+            <Search placeholder="Search applications by name, email, or status..." />
+            <div className="container mx-auto pt-6 pb-10">
                 <DataTable columns={columns} data={applications}/>
             </div>
         </>
