@@ -24,7 +24,7 @@ export default async function Applications({ searchParams }: ApplicationsProps) 
     }
 
     // Determine which column to search by based on searchParams
-    let searchColumn;
+    let searchColumn: string | null = null;
     let searchValue: string | null;
     if (searchParams.firstName) {
         searchColumn = 'first_name';
@@ -40,20 +40,20 @@ export default async function Applications({ searchParams }: ApplicationsProps) 
         searchValue = searchParams.status;
     }
 
-    let returnData;
-
+    let returnData: any;
+    const selectQuery: string = `
+        account_id,
+        applied_date,
+        status,
+        applicant_details (
+            email,
+            first_name,
+            last_name
+        ),
+        users!inner(applied)
+    `
     if (searchColumn) {
-        const { data: applications, error: dataError } = await supabase.from('applications').select(`
-            account_id,
-            applied_date,
-            status,
-            applicant_details (
-                email,
-                first_name,
-                last_name
-            ),
-            users!inner(applied)
-        `)
+        const { data: applications, error: dataError } = await supabase.from('applications').select(selectQuery)
             .eq('users.applied', 'Applied')
             .order('status', { ascending: true })
             .order('applied_date', { ascending: true })
@@ -64,20 +64,11 @@ export default async function Applications({ searchParams }: ApplicationsProps) 
         }
     
         // Filter out entries where applicant_details is null
-        returnData = applications.filter(application => application.applicant_details !== null);
+        returnData = applications.filter(application => 'applicant_details' in application 
+            && application.applicant_details !== null);
     }
     else {
-        const { data: applications, error: dataError } = await supabase.from('applications').select(`
-            account_id,
-            applied_date,
-            status,
-            applicant_details (
-                email,
-                first_name,
-                last_name
-            ),
-            users!inner(applied)
-        `)
+        const { data: applications, error: dataError } = await supabase.from('applications').select(selectQuery)
             .eq('users.applied', 'Applied')
             .order('status', { ascending: true })
             .order('applied_date', { ascending: true });
