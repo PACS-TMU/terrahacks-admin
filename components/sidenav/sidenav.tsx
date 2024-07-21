@@ -4,7 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import NavSignoutButton from "@/components/sidenav/nav-signout";
 import Loading from "@/components/loading";
-import { IoHomeOutline, IoDocumentsOutline, IoLockClosedOutline } from 'react-icons/io5';
+import { 
+    IoHomeOutline, 
+    IoDocumentsOutline, 
+    IoPersonOutline,
+    IoPeopleOutline,
+    IoFastFoodOutline } from 'react-icons/io5';
 import { Twirl as Hamburger } from 'hamburger-react';
 import { useClickAway } from "react-use";
 import { navItems } from "./navitems";
@@ -13,6 +18,9 @@ import { createClient } from "@/utils/supabase/client";
 const iconMapping: Record<string, ReactNode> = {
     "<IoHomeOutline />": <IoHomeOutline size={28} />,
     "<IoDocumentsOutline />": <IoDocumentsOutline size={28} />,
+    "<IoPersonOutline />": <IoPersonOutline size={28} />,
+    "<IoPeopleOutline />": <IoPeopleOutline size={28} />,
+    "<IoFastFoodOutline />": <IoFastFoodOutline size={28}/>
 };
 
 export default function Sidenav() {
