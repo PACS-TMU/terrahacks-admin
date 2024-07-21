@@ -38,7 +38,7 @@ export default async function Login() {
                         </div>
                     </CardContent>
                     <CardFooter className="flex flex-col items-center gap-4">
-                        <SubmitButton type={'submit'} className={'w-full'} form={'login'} formAction={login}
+                        <SubmitButton type={'submit'} className={'w-full text-sm'} form={'login'} formAction={login}
                                       pendingText={'Signing in...'}>
                             Sign in
                         </SubmitButton>

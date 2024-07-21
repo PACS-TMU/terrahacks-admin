@@ -8,9 +8,9 @@ const defaultUrl = process.env.NEXT_PUBLIC_BASE_URL
     : "http://localhost:3000";
 
 export const metadata = {
-    metadataBase: new URL(defaultUrl),
-    title: "TerraHacks Admin - Dashboard",
-    description: "Manage all TerraHacks admin things in one place easily! From applications to judging, handle it all from the admin dashboard.",
+  metadataBase: new URL('https://admin.terrahacks.ca'),
+  title: "TerraHacks Admin - Dashboard",
+  description: "Manage all TerraHacks admin things in one place easily! From applications to judging, handle it all from the admin dashboard.",
 };
 
 export default function RootLayout({

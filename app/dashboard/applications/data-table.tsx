@@ -108,8 +108,9 @@ export function DataTable<TData extends Application, TValue>({
                             <TableCell>{row.original.status}</TableCell>
                             <TableCell>
                                 <Link
+                                    aria-label="Review Application"
                                     href={`/dashboard/applications/${row.original.account_id}`}
-                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="text-sky-600 underline hover:text-fuchsia-600 ease-in-out duration-300"
                                 >
                                     Review Here
@@ -119,7 +120,7 @@ export function DataTable<TData extends Application, TValue>({
                     ))}
                 </TableBody>
             </Table>
-            <div className="flex items-center justify-between space-x-4 py-4">
+            <div className="flex flex-col md:flex-row items-center justify-between space-x-4 py-4">
                 <div className="flex items-center space-x-1 px-4">
                     <span>
                         Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}

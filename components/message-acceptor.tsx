@@ -1,12 +1,12 @@
 'use client';
-import {useEffect} from "react";
-import {useSearchParams, useRouter, usePathname} from "next/navigation";
+import { useEffect } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
-import {useToast} from "@/components/ui/use-toast"
+import { useToast } from "@/components/ui/use-toast"
 
 export default function MessageAcceptor() {
 
-    const {toast} = useToast();
+    const { toast } = useToast();
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const router = useRouter();
@@ -23,8 +23,10 @@ export default function MessageAcceptor() {
             variant: 'destructive'
         });
 
-        router.replace(pathname)
-
+        if (searchParams.has('message') || searchParams.has('error')) {
+            router.replace(pathname)
+        }
+        
     }, [searchParams]);
 
     return null;
