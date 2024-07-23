@@ -29,15 +29,15 @@ interface ApplicantDetails {
     email: string;
 }
 
-interface CheckIn {
-    checkin_time: string;
-    timestamp: string;
-    admin_id: string;
+interface Meal {
+    meal_no: string;
+    meal_taken: string;
+    meal_time: string;
 }
 
 interface Application {
+    meals: Meal[];
     applicant_details: ApplicantDetails;
-    checkin: CheckIn;
     account_id: string;
 }
 
@@ -53,6 +53,8 @@ export function DataTable<TData extends Application, TValue>({
     const dataTable = useMemo(() => data, [data]);
 
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 15 });
+
+    console.log(data);
 
     const table = useReactTable({
         data: dataTable,
@@ -77,6 +79,12 @@ export function DataTable<TData extends Application, TValue>({
         }
     };
 
+    // Need to sort meals array based on the meal number to ensure proper rendering
+    const sortedRows = table.getRowModel().rows.map(row => {
+        row.original.meals.sort((a, b) => parseInt(a.meal_no, 10) - parseInt(b.meal_no, 10));
+        return row;
+    });
+
     return (
         <div className="rounded-md border">
             <Table>
@@ -100,7 +108,7 @@ export function DataTable<TData extends Application, TValue>({
                 </TableHeader>
 
                 <TableBody>
-                    {table.getRowModel().rows.map((row) => (
+                    {sortedRows.map((row) => (
                         <TableRow key={row.id}>
                             <TableCell>
                                 {
@@ -108,25 +116,39 @@ export function DataTable<TData extends Application, TValue>({
                                 }
                             </TableCell>
                             <TableCell>{row.original.applicant_details?.email}</TableCell>
-                            <TableCell>{row.original.checkin !== null ? "Yes" : "No"}</TableCell>
                             <TableCell>
                                 {
-                                    row.original.checkin !== null ? format((row.original.checkin.checkin_time), 'PPpp') : ""
+                                    String(row.original.meals[0].meal_taken).toUpperCase() === "TRUE" ? "Yes" : "No"
                                 }
                             </TableCell>
                             <TableCell>
                                 {
-                                    row.original.checkin !== null ? row.original.checkin.admin_id : ""
+                                    String(row.original.meals[1].meal_taken).toUpperCase() === "TRUE" ? "Yes" : "No"
+                                }
+                            </TableCell>
+                            <TableCell>
+                                {
+                                    String(row.original.meals[2].meal_taken).toUpperCase() === "TRUE" ? "Yes" : "No"
+                                }
+                            </TableCell>
+                            <TableCell>
+                                {
+                                    String(row.original.meals[3].meal_taken).toUpperCase() === "TRUE" ? "Yes" : "No"
+                                }
+                            </TableCell>
+                            <TableCell>
+                                {
+                                    String(row.original.meals[4].meal_taken).toUpperCase() === "TRUE" ? "Yes" : "No"
                                 }
                             </TableCell>
                             <TableCell>
                                 <Link
-                                    aria-label="Review Application"
+                                    aria-label="Meal Register Here"
                                     href={`/dashboard/log/${row.original.account_id}`}
                                     rel="noopener noreferrer"
                                     className="text-sky-600 underline hover:text-fuchsia-600 ease-in-out duration-300"
                                 >
-                                    Check-In Here
+                                    Meal Register Here
                                 </Link>
                             </TableCell> 
                         </TableRow>
