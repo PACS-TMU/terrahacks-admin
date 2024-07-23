@@ -58,7 +58,6 @@ export default async function CheckIn({ searchParams }: ApplicationsProps) {
         let query = supabase.from('applications').select(selectQuery)
             .eq('status', 'Accepted')
             .order('applied_date', { ascending: true });
-            // .order('meals.meal_no', { ascending: true });
     
         if (searchColumn) {
             query = query.ilike(`applicant_details.${searchColumn}`, `%${searchValue!}%`);
@@ -70,7 +69,7 @@ export default async function CheckIn({ searchParams }: ApplicationsProps) {
             return redirect(`/dashboard/applications?error=${dataError.message}`);
         }
     
-        // Process applications to ensure checkin is not null and access checkin details
+        // Filter out entries where applicant_details is null
         return applications.filter(application => 'applicant_details' in application && application.applicant_details !== null);
     };
     

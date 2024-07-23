@@ -68,20 +68,13 @@ export default async function CheckIn({ searchParams }: ApplicationsProps) {
         if (dataError) {
             return redirect(`/dashboard/applications?error=${dataError.message}`);
         }
-    
-        // Process applications to ensure checkin is not null and access checkin details
-        return applications.map(application => {
-            const { checkin, ...rest } = application as unknown as { checkin: any };
-            const checkinDetails = checkin.length > 0 ? checkin[0] : null;
         
-            return {
-                ...rest,
-                checkin: checkinDetails
-            };
-        }).filter(application => 'applicant_details' in application && application.applicant_details !== null);
+        // Filter out entries where applicant_details is null
+        return applications.filter(application => 'applicant_details' in application && application.applicant_details !== null);
     };
     
     returnData = await fetchApplications(searchColumn, searchValue);
+    console.log(returnData);
 
     return (
         <>

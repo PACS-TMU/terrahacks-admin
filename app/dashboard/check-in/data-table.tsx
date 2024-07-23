@@ -37,7 +37,7 @@ interface CheckIn {
 
 interface Application {
     applicant_details: ApplicantDetails;
-    checkin: CheckIn;
+    checkin: CheckIn[];
     account_id: string;
 }
 
@@ -108,15 +108,19 @@ export function DataTable<TData extends Application, TValue>({
                                 }
                             </TableCell>
                             <TableCell>{row.original.applicant_details?.email}</TableCell>
-                            <TableCell>{row.original.checkin !== null ? "Yes" : "No"}</TableCell>
                             <TableCell>
                                 {
-                                    row.original.checkin !== null ? format((row.original.checkin.checkin_time), 'PPpp') : ""
+                                    row.original.checkin.length !== 0 ? "Yes" : "No"
                                 }
                             </TableCell>
                             <TableCell>
                                 {
-                                    row.original.checkin !== null ? row.original.checkin.admin_id : ""
+                                    row.original.checkin.length !== 0 ? format((String(row.original.checkin[0].checkin_time)), 'PPpp') : ""
+                                }
+                            </TableCell>
+                            <TableCell>
+                                {
+                                    row.original.checkin.length !== 0 ? String(row.original.checkin[0].admin_id) : ""
                                 }
                             </TableCell>
                             <TableCell>
