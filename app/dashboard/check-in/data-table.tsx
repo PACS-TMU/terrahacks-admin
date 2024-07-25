@@ -126,7 +126,7 @@ export function DataTable<TData extends Application, TValue>({
                             </TableCell>
                             <TableCell>
                                 {
-                                    row.original.checkin.length !== 0 ? String(row.original.admin.first_name + " " + row.original.admin.last_name) : ""
+                                    row.original.checkin.length !== 0 ? row.original.admin.first_name + " " + row.original.admin.last_name : ""
                                 }
                             </TableCell>
                             <TableCell>
