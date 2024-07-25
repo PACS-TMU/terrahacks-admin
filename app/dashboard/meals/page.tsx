@@ -66,7 +66,7 @@ export default async function CheckIn({ searchParams }: ApplicationsProps) {
         const { data: applications, error: dataError } = await query;
     
         if (dataError) {
-            return redirect(`/dashboard/applications?error=${dataError.message}`);
+            return redirect(`/dashboard?error=${dataError.message}`);
         }
     
         // Filter out entries where applicant_details is null

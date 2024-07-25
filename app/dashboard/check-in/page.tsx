@@ -37,7 +37,6 @@ export default async function CheckIn({ searchParams }: ApplicationsProps) {
     }
 
     let returnData: any;
-    // TODO: Cross-reference the admin's id with the admin's name
     const selectQuery: string = `
         account_id,
         applied_date,
@@ -66,11 +65,30 @@ export default async function CheckIn({ searchParams }: ApplicationsProps) {
         const { data: applications, error: dataError } = await query;
     
         if (dataError) {
-            return redirect(`/dashboard/applications?error=${dataError.message}`);
+            return redirect(`/dashboard?error=${dataError.message}`);
         }
+
+        // Promise to fetch admin's first name for each checked-in participant
+        const applicationsWithAdminName = await Promise.all(applications.map(async (application: any) => {
+            if (application.checkin && application.checkin.length > 0) {
+                const { data: adminData, error: adminError } = await supabase
+                    .from('admins')
+                    .select('first_name, last_name')
+                    .eq('admin_id', application.checkin[0].admin_id) 
+                    .single();
+        
+                if (!adminError && adminData) {
+                    application.admin = {
+                        first_name: adminData.first_name,
+                        last_name: adminData.last_name
+                    }
+                }
+            }
+            return application;
+        }));
         
         // Filter out entries where applicant_details is null
-        return applications.filter(application => 'applicant_details' in application && application.applicant_details !== null);
+        return applicationsWithAdminName.filter(application => 'applicant_details' in application && application.applicant_details !== null);
     };
     
     returnData = await fetchApplications(searchColumn, searchValue);

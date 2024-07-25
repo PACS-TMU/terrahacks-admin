@@ -35,10 +35,16 @@ interface CheckIn {
     admin_id: string;
 }
 
+interface Admin {
+    first_name: string,
+    last_name: string
+}
+
 interface Application {
     applicant_details: ApplicantDetails;
     checkin: CheckIn[];
     account_id: string;
+    admin: Admin;
 }
 
 interface DataTableProps<TData, TValue> {
@@ -120,7 +126,7 @@ export function DataTable<TData extends Application, TValue>({
                             </TableCell>
                             <TableCell>
                                 {
-                                    row.original.checkin.length !== 0 ? String(row.original.checkin[0].admin_id) : ""
+                                    row.original.checkin.length !== 0 ? String(row.original.admin.first_name + " " + row.original.admin.last_name) : ""
                                 }
                             </TableCell>
                             <TableCell>
