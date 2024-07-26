@@ -19,15 +19,15 @@ export const navItems = [
     },
     {
         id: 3,
-        name: "Teams",
-        path: "/dashboard/teams",
-        icon: "<IoPeopleOutline />",
-    },
-    {
-        id: 4,
         name: "Meals",
         path: "/dashboard/meals",
         icon: "<IoFastFoodOutline />",
     },
-
+    {
+        id: 4,
+        name: "Teams",
+        path: "/dashboard/teams",
+        icon: "<IoPeopleOutline />",
+    },
+    
 ];

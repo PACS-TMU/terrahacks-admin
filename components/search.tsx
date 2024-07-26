@@ -88,6 +88,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
                             name="searchType"
                             value="email"
                             className="peer hidden"
+                            autoComplete="email"
                         />
                         <label
                             htmlFor="email"
