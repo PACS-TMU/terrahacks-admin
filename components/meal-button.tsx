@@ -12,11 +12,13 @@ export default function MealButton({ mealNumber, meal_id, mealTaken, admin_id }:
 }
 ) {
     const router = useRouter();
+
     const takeMeal = async () => {
         const { data, error } = await supabase.from('meals').update({
             meal_taken: true,
             admin_id: admin_id
         }).eq('meal_id', meal_id).select();
+
         if (error) {
             console.error(error);
         } else {
@@ -25,10 +27,14 @@ export default function MealButton({ mealNumber, meal_id, mealTaken, admin_id }:
         }
     }
     console.log(mealTaken)
-    
+
     return (
-        <button disabled={mealTaken} onClick={takeMeal} className={'border w-1/2'}>{
-            mealTaken ? `Meal ${mealNumber} Taken` : `Take Meal ${mealNumber}`
-        }</button>
+        <button
+            disabled={mealTaken}
+            onClick={takeMeal}
+            className={'border w-1/2'}
+        >
+            {mealTaken ? `Meal ${mealNumber} Taken` : `Take Meal ${mealNumber}`}
+        </button>
     )
 }

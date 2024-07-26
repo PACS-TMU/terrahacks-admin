@@ -21,7 +21,7 @@ export default async function LogPage({ params }: { params: { user_id: string } 
 
     const { data: checkedIn } = await supabase.from('checkin').select('id').eq('user_id', params.user_id).single();
     console.log(checkedIn)
-    
+
     const checkInData = {
         account_id: user.id,
         admin_id: admin_id?.admin_id,
