@@ -54,8 +54,6 @@ export function DataTable<TData extends Application, TValue>({
 
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 15 });
 
-    console.log(data);
-
     const table = useReactTable({
         data: dataTable,
         columns,
