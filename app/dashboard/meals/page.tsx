@@ -11,11 +11,10 @@ type ApplicationsProps = {
         firstName?: string;
         lastName?: string;
         email?: string;
-        status?: string;
     };
 };
 
-export default async function Applications({ searchParams }: ApplicationsProps) {
+export default async function CheckIn({ searchParams }: ApplicationsProps) {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -24,8 +23,8 @@ export default async function Applications({ searchParams }: ApplicationsProps) 
     }
 
     // Determine which column to search by based on searchParams
-    let searchColumn: string | null = null;
-    let searchValue: string | null;
+    let searchColumn: string | undefined = undefined;
+    let searchValue: string | undefined;
     if (searchParams.firstName) {
         searchColumn = 'first_name';
         searchValue = searchParams.firstName;
@@ -35,9 +34,6 @@ export default async function Applications({ searchParams }: ApplicationsProps) 
     } else if (searchParams.email) {
         searchColumn = 'email';
         searchValue = searchParams.email;
-    } else if (searchParams.status) {
-        searchColumn = 'status';
-        searchValue = searchParams.status;
     }
 
     let returnData: any;
@@ -50,41 +46,40 @@ export default async function Applications({ searchParams }: ApplicationsProps) 
             first_name,
             last_name
         ),
+        meals(
+            meal_no,
+            meal_taken,
+            meal_time
+        ),
         users!inner(applied)
     `
-    if (searchColumn) {
-        const { data: applications, error: dataError } = await supabase.from('applications').select(selectQuery)
-            .eq('users.applied', 'Applied')
-            .order('status', { ascending: true })
-            .order('applied_date', { ascending: true })
-            .ilike(`applicant_details.${searchColumn}`, `%${searchValue!}%`);
+
+    const fetchApplications = async (searchColumn?: string, searchValue?: string) => {
+        let query = supabase.from('applications').select(selectQuery)
+            .eq('status', 'Accepted')
+            .order('applied_date', { ascending: true });
+    
+        if (searchColumn) {
+            query = query.ilike(`applicant_details.${searchColumn}`, `%${searchValue!}%`);
+        }
+    
+        const { data: applications, error: dataError } = await query;
     
         if (dataError) {
-            return redirect(`/dashboard/applications?error=${dataError.message}`);
+            return redirect(`/dashboard?error=${dataError.message}`);
         }
     
         // Filter out entries where applicant_details is null
-        returnData = applications.filter(application => 'applicant_details' in application 
-            && application.applicant_details !== null);
-    }
-    else {
-        const { data: applications, error: dataError } = await supabase.from('applications').select(selectQuery)
-            .eq('users.applied', 'Applied')
-            .order('status', { ascending: true })
-            .order('applied_date', { ascending: true });
-
-        if (dataError) {
-            return redirect(`/dashboard/applications?error=${dataError.message}`);
-        }
-
-        returnData = applications;
-    }
+        return applications.filter(application => 'applicant_details' in application && application.applicant_details !== null);
+    };
+    
+    returnData = await fetchApplications(searchColumn, searchValue);
 
     return (
         <>
             <Intro
-                header="Applications"
-                description="View all applications submitted by participants. You can view the status of each application and the applicant's details."
+               header="Meals Management"
+               description="Manage meals for participants. Verify who has received their meals and who hasn't."
             />
             <Search placeholder="Search applications by name, email, or status..." />
             {returnData.length === 0 ? (

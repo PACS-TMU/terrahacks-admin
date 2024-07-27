@@ -11,4 +11,23 @@ export const navItems = [
         path: "/dashboard/applications",
         icon: "<IoDocumentsOutline />",
     },
+    {
+        id: 2,
+        name: "Check-in",
+        path: "/dashboard/check-in",
+        icon: "<IoPersonOutline />",
+    },
+    {
+        id: 3,
+        name: "Meals",
+        path: "/dashboard/meals",
+        icon: "<IoFastFoodOutline />",
+    },
+    {
+        id: 4,
+        name: "Teams",
+        path: "/dashboard/teams",
+        icon: "<IoPeopleOutline />",
+    },
+    
 ];
