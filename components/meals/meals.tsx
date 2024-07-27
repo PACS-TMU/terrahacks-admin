@@ -43,7 +43,14 @@ export default async function Meals({ admin_id, user }: { admin_id: string, user
                         );
                     }
 
-                    const mealTime = new Date(mealData.meal_time).toLocaleString([], { hour12: false });
+                    const mealTime = new Date(mealData.meal_time).toLocaleString([], {
+                        hour: '2-digit',
+                        month: '2-digit',
+                        day: '2-digit',
+                        minute: '2-digit',
+                        hour12: false,
+                        timeZone: 'America/Toronto'
+                    });
 
                     // Get the admin data
                     const { data: admin, error: adminError } = await supabase
@@ -68,7 +75,7 @@ export default async function Meals({ admin_id, user }: { admin_id: string, user
                                 Meal completed by: <span className='font-mono font-semibold'>{admin.first_name} {admin.last_name}</span>
                             </p>
                             <p className='text-left w-full mx-2'>
-                                Meal taken at: <span className='font-mono font-semibold'>{mealTime}</span>
+                                Meal taken at: <span className='font-mono font-semibold'>{mealTime} EST</span>
                             </p>
                         </div>
                     );

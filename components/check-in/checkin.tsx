@@ -28,7 +28,20 @@ export default async function CheckIn({ user_id, checkedIn, checkInData }: { use
         return redirect('/dashboard?error=Error retrieving admin: ' + adminError.message);
     }
 
-    const checkInTime = new Date(checkedIn.checkin_time).toLocaleString([], { hour12: false });
+    // Create a new Date object from the timestamp
+    const originalTime = new Date(checkedIn.checkin_time);
+
+    // Format the date without seconds
+    const checkInTime = originalTime.toLocaleString([], {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        timeZone: 'America/Toronto'
+    });
+
 
     return (
         <div className='flex flex-col items-center justify-center w-full mx-auto'>
@@ -40,7 +53,7 @@ export default async function CheckIn({ user_id, checkedIn, checkInData }: { use
                 Checked in by: <span className='font-mono font-semibold'>{admin.first_name} {admin.last_name}</span>
             </p>
             <p className='text-left lg:w-1/2 px-2'>
-                Checked in at: <span className='font-mono font-semibold'>{checkInTime}</span>
+                Checked in at: <span className='font-mono font-semibold'>{checkInTime} EST</span>
             </p>
         </div>
     )
