@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 
 import Intro from "@/components/intro";
 import CheckIn from "@/components/check-in/checkin";
-import MealButton from "@/components/meals/meal-button";
 import Meals from "@/components/meals/meals";
 
 export default async function LogPage({ params }: { params: { user_id: string } }) {
@@ -56,7 +55,7 @@ export default async function LogPage({ params }: { params: { user_id: string } 
     return (
         <>
             <Intro
-                header={'Log'}
+                header={`${user.applicant_details[0].first_name}'s Log`}
                 description={'This is where admins log user activity.'}
             />
 
