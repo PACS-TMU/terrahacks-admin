@@ -72,11 +72,11 @@ export default async function Dashboard() {
                 header="Admin Dashboard"
                 description="Welcome to the admin dashboard. Below are some statistics and actions you can take."
             />
-            <section className={'flex flex-col items-center'}>
-                <Link href={'/dashboard/applications'} className={`${buttonVariants({variant: "default"})} w-1/2 mt-8 text-lg font-semibold`}>
+            <section className={'flex flex-col items-center container'}>
+                <Link href={'/dashboard/applications'} className={`${buttonVariants({variant: "default"})} w-full mt-8 text-lg font-semibold`}>
                     Review Applications Now!!
                 </Link>
-                <div className={'grid grid-cols-2 w-1/2 gap-8 my-8'}>
+                <div className={'grid md:grid-cols-2 lg:grid-cols-4 gap-8 my-8 w-full'}>
                     <Card className={''}>
                         <CardHeader>
                             <CardTitle>Applications Count</CardTitle>
