@@ -45,7 +45,6 @@ export default async function handleStatusUpdate(formData: FormData) {
 
     // Redirect if there is an error
     if (adminLogsError) {
-        console.log(current_status, new_status);
         return redirect(`/dashboard/applications/${applicant_id}?error=admin-logs-insert-error: ${adminLogsError.message}`);
     }
 
