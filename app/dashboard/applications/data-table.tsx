@@ -23,18 +23,14 @@ import {
 import { useMemo, useState } from "react";
 import { format } from 'date-fns';
 
-interface ApplicantDetails {
+interface Application {
+    application_id: string;
+    applied_date: string;
+    app_status: string;
+    account_id: string;
     first_name: string;
     last_name: string;
     email: string;
-}
-
-interface Application {
-    application_id: string;
-    applicant_details: ApplicantDetails;
-    applied_date: string;
-    status: string;
-    account_id: string;
 }
 
 interface DataTableProps<TData, TValue> {
@@ -100,12 +96,12 @@ export function DataTable<TData extends Application, TValue>({
                         <TableRow key={row.id}>
                             <TableCell>
                                 {
-                                    row.original.applicant_details?.first_name + " " + row.original.applicant_details?.last_name || "N/A"
+                                    row.original.first_name + " " + row.original.last_name || "N/A"
                                 }
                             </TableCell>
-                            <TableCell>{row.original.applicant_details?.email}</TableCell>
+                            <TableCell>{row.original.email}</TableCell>
                             <TableCell>{format((row.original.applied_date), 'PPpp')}</TableCell>
-                            <TableCell>{row.original.status}</TableCell>
+                            <TableCell>{row.original.app_status}</TableCell>
                             <TableCell>
                                 <Link
                                     aria-label="Review Application"

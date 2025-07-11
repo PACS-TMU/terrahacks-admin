@@ -28,7 +28,7 @@ export default async function handleStatusUpdate(formData: FormData) {
     const admin_id = adminDetails.admin_id;
 
     // Update application status
-    const { data: updatedApplication, error: updateError } = await supabase.from('applications').update({ status: new_status }).eq('application_id', application_id);
+    const { data: updatedApplication, error: updateError } = await supabase.from('applicant_details').update({ app_status: new_status }).eq('application_id', application_id);
     if (updateError) {
         return redirect(`/dashboard/applications/${applicant_id}?error=application-update-error: ${updateError.message}`);
     }
@@ -45,6 +45,7 @@ export default async function handleStatusUpdate(formData: FormData) {
 
     // Redirect if there is an error
     if (adminLogsError) {
+        console.log(current_status, new_status);
         return redirect(`/dashboard/applications/${applicant_id}?error=admin-logs-insert-error: ${adminLogsError.message}`);
     }
 

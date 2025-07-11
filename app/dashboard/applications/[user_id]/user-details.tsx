@@ -24,11 +24,11 @@ export default function UserDetails({ user_id, userData, appQuestions, appRespon
                 </div>
                 <div>
                     <h2 className="text-lg font-semibold">Current Status</h2>
-                    <p className="text-gray-700">{userData.applications.status}</p>
+                    <p className="text-gray-700">{userData.app_status}</p>
                 </div>
                 <div>
                     <h2 className="text-lg font-semibold">Applied Date</h2>
-                    <p className="text-gray-700">{format(userData.applications.applied_date, 'PPpp')}</p>
+                    <p className="text-gray-700">{format(userData.applied_date, 'PPpp')}</p>
                 </div>
                 <div>
                     <h2 className="text-lg font-semibold">School</h2>

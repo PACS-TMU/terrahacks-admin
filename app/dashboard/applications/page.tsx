@@ -44,39 +44,35 @@ export default async function Applications({ searchParams }: ApplicationsProps) 
     const selectQuery: string = `
         account_id,
         applied_date,
-        status,
-        applicant_details (
-            email,
-            first_name,
-            last_name
-        ),
+        app_status,
+        email,
+        first_name,
+        last_name,
         users!inner(applied)
     `
     if (searchColumn) {
-        const { data: applications, error: dataError } = await supabase.from('applications').select(selectQuery)
+        const { data: applications, error: dataError } = await supabase.from('applicant_details').select(selectQuery)
             .eq('users.applied', 'Applied')
-            .order('status', { ascending: true })
+            .order('app_status', { ascending: true })
             .order('applied_date', { ascending: true })
-            .ilike(`applicant_details.${searchColumn}`, `%${searchValue!}%`);
+            .ilike(`${searchColumn}`, `%${searchValue!}%`);
     
         if (dataError) {
             return redirect(`/dashboard/applications?error=${dataError.message}`);
         }
     
         // Filter out entries where applicant_details is null
-        returnData = applications.filter(application => 'applicant_details' in application 
-            && application.applicant_details !== null);
+        returnData = applications
     }
     else {
-        const { data: applications, error: dataError } = await supabase.from('applications').select(selectQuery)
+        const { data: applications, error: dataError } = await supabase.from('applicant_details').select(selectQuery)
             .eq('users.applied', 'Applied')
-            .order('status', { ascending: true })
+            .order('app_status', { ascending: true })
             .order('applied_date', { ascending: true });
 
         if (dataError) {
             return redirect(`/dashboard/applications?error=${dataError.message}`);
         }
-
         returnData = applications;
     }
 
