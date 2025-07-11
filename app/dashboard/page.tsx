@@ -30,16 +30,16 @@ export default async function Dashboard() {
 
     // Applications Status
     const {count: applications_accepted} = await supabase
-        .from('applications')
-        .select('*', {count: "exact", head: true}).eq('status', 'Accepted')
+        .from('applicant_details')
+        .select('*', {count: "exact", head: true}).eq('app_status', 'Accepted')
     const {count: applications_rejected} = await supabase
-        .from('applications')
-        .select('*', {count: "exact", head: true}).eq('status', 'Rejected')
+        .from('applicant_details')
+        .select('*', {count: "exact", head: true}).eq('app_status', 'Rejected')
     const {count: applications_under_review} = await supabase
-        .from('applications')
-        .select('status, users!inner(applied)', {count: "exact", head: true})
+        .from('applicant_details')
+        .select('app_status, users!inner(applied)', {count: "exact", head: true})
         .eq("users.applied", "Applied")
-        .eq("status", "Under Review")
+        .eq("app_status", "Under Review")
 
     // TMU Students
     const {count: tmu_students_signups} = await supabase
@@ -50,12 +50,12 @@ export default async function Dashboard() {
         .eq('users.applied', 'Applied')
     const {count: tmu_students_accepted} = await supabase
         .from('tmu_students')
-        .select('*, applications!inner(status)', {count: 'exact', head: true})
-        .eq('applications.status', 'Accepted')
+        .select('*, applicant_details!inner(app_status)', {count: 'exact', head: true})
+        .eq('applicant_details.app_status', 'Accepted')
     const {count: tmu_students_rejected} = await supabase
         .from('tmu_students')
-        .select('*, applications!inner(status)', {count: 'exact', head: true})
-        .eq('applications.status', 'Rejected')
+        .select('*, applicant_details!inner(app_status)', {count: 'exact', head: true})
+        .eq('applicant_details.app_status', 'Rejected')
     const tmu_student_percentage = ((tmu_students_applicants! / total_complete_applications!) * 100).toFixed(1)
 
     // Data Requests
