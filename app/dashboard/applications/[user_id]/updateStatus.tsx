@@ -5,7 +5,7 @@ import handleStatusUpdate from "@/server/handle-status-update";
 import { format } from "date-fns";
 
 export default function UpdateStatus({ userData, adminLogs }: { user_id: string, userData: any, adminLogs: any }) {
-    const [selectedStatus, setSelectedStatus] = useState(userData.status);
+    const [selectedStatus, setSelectedStatus] = useState(userData.app_status);
 
     const handleStatusChange = (e: any) => {
         setSelectedStatus(e.target.value);
