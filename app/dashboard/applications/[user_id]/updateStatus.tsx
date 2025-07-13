@@ -5,7 +5,7 @@ import handleStatusUpdate from "@/server/handle-status-update";
 import { format } from "date-fns";
 
 export default function UpdateStatus({ userData, adminLogs }: { user_id: string, userData: any, adminLogs: any }) {
-    const [selectedStatus, setSelectedStatus] = useState(userData.applications.status);
+    const [selectedStatus, setSelectedStatus] = useState(userData.app_status);
 
     const handleStatusChange = (e: any) => {
         setSelectedStatus(e.target.value);
@@ -17,7 +17,7 @@ export default function UpdateStatus({ userData, adminLogs }: { user_id: string,
             <form className="flex items-center">
                 <input type="hidden" name="user_id" value={userData.account_id} />
                 <input type="hidden" name="application_id" value={userData.application_id} />
-                <input type="hidden" name="currentStatus" value={userData.applications.status} />
+                <input type="hidden" name="currentStatus" value={userData.app_status} />
                 <select
                     value={selectedStatus}
                     onChange={handleStatusChange}
