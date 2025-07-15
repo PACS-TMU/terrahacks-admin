@@ -38,7 +38,8 @@ export default async function Page({ params }: { params: { user_id: string } }) 
             school, 
             field_of_study, 
             level_of_study,
-            applications!inner(applied_date, status)
+            applied_date,
+            app_status
         `)
         .eq('account_id', params.user_id)
         .single();
