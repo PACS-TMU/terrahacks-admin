@@ -23,11 +23,6 @@ import {
 import { useMemo, useState } from "react";
 import { format } from 'date-fns';
 
-interface ApplicantDetails {
-    first_name: string;
-    last_name: string;
-    email: string;
-}
 
 interface CheckIn {
     checkin_time: string;
@@ -41,7 +36,9 @@ interface Admin {
 }
 
 interface Application {
-    applicant_details: ApplicantDetails;
+    first_name: string;
+    last_name: string;
+    email: string;
     checkin: CheckIn[];
     account_id: string;
     admin: Admin;
@@ -110,10 +107,10 @@ export function DataTable<TData extends Application, TValue>({
                         <TableRow key={row.id}>
                             <TableCell>
                                 {
-                                    row.original.applicant_details?.first_name + " " + row.original.applicant_details?.last_name || "N/A"
+                                    row.original.first_name + " " + row.original.last_name || "N/A"
                                 }
                             </TableCell>
-                            <TableCell>{row.original.applicant_details?.email}</TableCell>
+                            <TableCell>{row.original.email}</TableCell>
                             <TableCell>
                                 {
                                     row.original.checkin.length !== 0 ? "Yes" : "No"
