@@ -40,30 +40,29 @@ export default async function CheckIn({ searchParams }: ApplicationsProps) {
     const selectQuery: string = `
         account_id,
         applied_date,
-        status,
-        applicant_details (
-            email,
-            first_name,
-            last_name
-        ),
+        app_status,
+        first_name,
+        last_name,
+        email,
         checkin (
             checkin_time,
             admin_id
         ),
-        users!inner(applied)
+        users!inner(applied),
+        rsvp!inner(status)
     `
 
     const fetchApplications = async (searchColumn?: string, searchValue?: string) => {
-        let query = supabase.from('applications').select(selectQuery)
-            .eq('status', 'Accepted')
+        let query = supabase.from('applicant_details').select(selectQuery)
+            .eq('rsvp.status', 'Yes')
             .order('applied_date', { ascending: true });
-    
+
         if (searchColumn) {
             query = query.ilike(`applicant_details.${searchColumn}`, `%${searchValue!}%`);
         }
-    
+
         const { data: applications, error: dataError } = await query;
-    
+
         if (dataError) {
             return redirect(`/dashboard?error=${dataError.message}`);
         }
@@ -74,9 +73,9 @@ export default async function CheckIn({ searchParams }: ApplicationsProps) {
                 const { data: adminData, error: adminError } = await supabase
                     .from('admins')
                     .select('first_name, last_name')
-                    .eq('admin_id', application.checkin[0].admin_id) 
+                    .eq('admin_id', application.checkin[0].admin_id)
                     .single();
-        
+
                 if (!adminError && adminData) {
                     application.admin = {
                         first_name: adminData.first_name,
@@ -84,20 +83,21 @@ export default async function CheckIn({ searchParams }: ApplicationsProps) {
                     }
                 }
             }
+
             return application;
         }));
-        
-        // Filter out entries where applicant_details is null
-        return applicationsWithAdminName.filter(application => 'applicant_details' in application && application.applicant_details !== null);
-    };
-    
+
+        // Return all applications as each represents a row from applicant_details
+        return applicationsWithAdminName;
+    }
+
     returnData = await fetchApplications(searchColumn, searchValue);
 
     return (
         <>
             <Intro
-               header="Event Check-In"
-               description="Manage event check-ins for participants. Verify the status of each participant and confirm their attendance."
+                header="Event Check-In"
+                description="Manage event check-ins for participants. Verify the status of each participant and confirm their attendance."
             />
             <Search placeholder="Search applications by name, email, or status..." />
             {returnData.length === 0 ? (

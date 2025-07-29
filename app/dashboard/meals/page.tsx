@@ -40,46 +40,47 @@ export default async function CheckIn({ searchParams }: ApplicationsProps) {
     const selectQuery: string = `
         account_id,
         applied_date,
-        status,
-        applicant_details (
-            email,
-            first_name,
-            last_name
-        ),
+        app_status,
+        email,
+        first_name,
+        last_name,
         meals(
             meal_no,
             meal_taken,
             meal_time
         ),
-        users!inner(applied)
+        users!inner(applied),
+        rsvp!inner(status)
     `
 
     const fetchApplications = async (searchColumn?: string, searchValue?: string) => {
-        let query = supabase.from('applications').select(selectQuery)
-            .eq('status', 'Accepted')
+        let query = supabase.from('applicant_details').select(selectQuery)
+            .eq('rsvp.status', 'Yes')
             .order('applied_date', { ascending: true });
-    
+
         if (searchColumn) {
             query = query.ilike(`applicant_details.${searchColumn}`, `%${searchValue!}%`);
         }
-    
+
         const { data: applications, error: dataError } = await query;
-    
+
         if (dataError) {
             return redirect(`/dashboard?error=${dataError.message}`);
         }
-    
-        // Filter out entries where applicant_details is null
-        return applications.filter(application => 'applicant_details' in application && application.applicant_details !== null);
+
+        // Return applications directly as Supabase returns an array of objects
+        return applications || [];
     };
-    
+
     returnData = await fetchApplications(searchColumn, searchValue);
+
+    console.log("Return Data:", returnData[0]);
 
     return (
         <>
             <Intro
-               header="Meals Management"
-               description="Manage meals for participants. Verify who has received their meals and who hasn't."
+                header="Meals Management"
+                description="Manage meals for participants. Verify who has received their meals and who hasn't."
             />
             <Search placeholder="Search applications by name, email, or status..." />
             {returnData.length === 0 ? (

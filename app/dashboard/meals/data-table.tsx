@@ -21,13 +21,6 @@ import {
 } from "@/components/ui/table";
 
 import { useMemo, useState } from "react";
-import { format } from 'date-fns';
-
-interface ApplicantDetails {
-    first_name: string;
-    last_name: string;
-    email: string;
-}
 
 interface Meal {
     meal_no: string;
@@ -37,7 +30,9 @@ interface Meal {
 
 interface Application {
     meals: Meal[];
-    applicant_details: ApplicantDetails;
+    first_name: string;
+    last_name: string;
+    email: string;
     account_id: string;
 }
 
@@ -110,10 +105,10 @@ export function DataTable<TData extends Application, TValue>({
                         <TableRow key={row.id}>
                             <TableCell>
                                 {
-                                    row.original.applicant_details?.first_name + " " + row.original.applicant_details?.last_name || "N/A"
+                                    row.original.first_name + " " + row.original.last_name || "N/A"
                                 }
                             </TableCell>
-                            <TableCell>{row.original.applicant_details?.email}</TableCell>
+                            <TableCell>{row.original.email}</TableCell>
                             <TableCell>
                                 {
                                     String(row.original.meals[0].meal_taken).toUpperCase() === "TRUE" ? "Yes" : "No"

@@ -49,6 +49,7 @@ export default async function LogPage({ params }: { params: { user_id: string } 
     // Get the user's meals
     const { data: meals, error: mealsRetrievalError } = await supabase.from('meals').select('*').eq('account_id', user.id).order('meal_no', { ascending: true })
     if (mealsRetrievalError) {
+        console.error("Error retrieving meals:", mealsRetrievalError);
         return redirect('/?error=Unable to retrieve Meal Data.')
     }
 
