@@ -74,8 +74,6 @@ export default async function CheckIn({ searchParams }: ApplicationsProps) {
 
     returnData = await fetchApplications(searchColumn, searchValue);
 
-    console.log("Return Data:", returnData[0]);
-
     return (
         <>
             <Intro
