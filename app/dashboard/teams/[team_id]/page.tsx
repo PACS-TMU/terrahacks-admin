@@ -1,56 +1,55 @@
-"use client";
-import { useState, useEffect } from "react";
-import { createClient } from "@/utils/supabase/client";
+'use server';
+import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import Intro from "@/components/intro";
 
-interface TeamMember {
-    application_id: string;
-    team_id: string;
-    joined_at: string;
-}
+export default async function TeamPage({ params }: { params: { team_id: string } }) {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-export default function Teams({ params }: { params: { team_id: string } }) {
-    const [members, setMembers] = useState<TeamMember[]>([]);
-
-    useEffect(() => {
-        const fetchMembers = async () => {
-            const supabase = createClient();
-            const { data: { user } } = await supabase.auth.getUser();
-            
-            if (!user) {
-                redirect("/?error=Unauthorized. Log in with Admin credentials.");
-            }
-
-            const { data: membersData, error: membersError } = await supabase
-                .from("team_members")
-                .select("*, teams(team_id, team_name, created_by)")
-                .order("created_at", { ascending: false })
-                .eq("team_members.team_id", params.team_id);
-
-            if (membersError) {
-                console.error("Error fetching team members:", membersError);
-                return redirect("/dashboard/teams?error=Failed to fetch team members.");
-            }
-
-            console.log("Fetched members:", membersData);
-
-            setMembers(membersData ?? []);
-        };
-        fetchMembers();
-    }, []);
-
-    if (!members) {
+    if (!user) {
         return redirect("/?error=Unauthorized. Log in with Admin credentials.");
     }
+    const { data: team, error: teamError } = await supabase
+        .from("teams")
+        .select("*, applicant_details!inner(first_name, last_name)")
+        .eq("team_id", params.team_id)
+        .single();
+
+    const { data: teamMembers, error: teamMembersError } = await supabase
+        .from("team_members")
+        .select("*, applicant_details!inner(first_name, last_name, email, account_id)")
+        .eq("team_id", params.team_id)
+
+    console.log(team);
+    console.log(teamMembers);
+
     return (
         <>
-            <Intro
-                header="Manage Teams"
-                description="View the team members in each team."
-            />
-            <h3 className="text-center py-4 text-2xl xl:text-3xl font-semibold">Total Team Members: {members.length}</h3>
+            <div className="container mx-auto p-6">
+                <h2 className="text-2xl font-bold mb-4">{team?.team_name}</h2>
+                <p className="">Created by: {team?.applicant_details.first_name} {team?.applicant_details.last_name}</p>
+                <p className="mb-4">Created at: {new Date(team?.created_at).toLocaleString()}</p>
+                <h3 className="text-xl font-semibold mb-2">Team Members</h3>
+                {teamMembers && teamMembers.length > 0 ? (
+                    <ul className="space-y-4">
+                        {teamMembers.map((member) => (
+                            <li key={member.account_id} className="bg-white rounded-lg shadow p-4 flex justify-between items-center">
+                                <div>
+                                    <p>{member.applicant_details.first_name} {member.applicant_details.last_name}</p>
+                                    <p>{member.applicant_details.email}</p>
+                                    <p>Joined at: {new Date(member.joined_at).toLocaleString()}</p>
+                                </div>
+                                <Link href={`/dashboard/applications/${member.applicant_details.account_id}`} className="text-blue-500 hover:underline">
+                                    View Application
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No team members found.</p>
+                )}
+            </div>
         </>
-    )
+    );
 }
