@@ -1,43 +1,22 @@
-"use client";
-import { useState, useEffect } from "react";
-import Intro from "@/components/intro";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Intro from "@/components/intro";
 
-interface Team {
-    team_id: string;
-    team_name: string;
-    created_by: string;
-    created_at: string;
-}
-
-export default function Teams() {
-    const [teams, setTeams] = useState<Team[]>([]);
-
-    useEffect(() => {
-        const fetchTeams = async () => {
-            const supabase = createClient();
-            const { data: { user } } = await supabase.auth.getUser();
-
-            if (!user) {
-                redirect("/?error=Unauthorized. Log in with Admin credentials.");
-            }
-
-            const { data: teamsData } = await supabase
-                .from("teams")
-                .select("*");
-
-            setTeams(teamsData ?? []);
-        };
-
-        fetchTeams();
-    }, []);
-
-    if (!teams) {
+export default async function Teams() {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
         return redirect("/?error=Unauthorized. Log in with Admin credentials.");
     }
+    const { data: teams, error: teamsError } = await supabase
+        .from("teams")
+        .select("*")
+        .order("created_at", { ascending: true });
 
+    if (teamsError) {
+        return redirect(`/dashboard/teams?error=teams-fetch-error: ${teamsError.message}`);
+    }
     return (
         <>
             <Intro
@@ -75,5 +54,5 @@ export default function Teams() {
                 )}
             </div>
         </>
-    )
+    );
 }
