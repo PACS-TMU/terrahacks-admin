@@ -21,9 +21,6 @@ export default async function TeamPage({ params }: { params: { team_id: string }
         .select("*, applicant_details!inner(first_name, last_name, email, account_id)")
         .eq("team_id", params.team_id)
 
-    console.log(team);
-    console.log(teamMembers);
-
     return (
         <>
             <div className="container mx-auto p-6">
