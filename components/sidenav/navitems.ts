@@ -13,18 +13,24 @@ export const navItems = [
     },
     {
         id: 2,
+        name: "Volunteer Applications",
+        path: "/dashboard/volunteer-applications",
+        icon: "<IoPeopleOutline />",
+    },
+    {
+        id: 3,
         name: "Check-in",
         path: "/dashboard/check-in",
         icon: "<IoPersonOutline />",
     },
     {
-        id: 3,
+        id: 4,
         name: "Meals",
         path: "/dashboard/meals",
         icon: "<IoFastFoodOutline />",
     },
     {
-        id: 4,
+        id: 5,
         name: "Teams",
         path: "/dashboard/teams",
         icon: "<IoPeopleOutline />",
